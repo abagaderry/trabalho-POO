@@ -1,9 +1,0 @@
-br\com\fatec\App.class
-br\com\fatec\model\Pedido.class
-br\com\fatec\DAO\ClienteDAO.class
-br\com\fatec\DAO\ProdutoDAO.class
-br\com\fatec\DAO\PedidoDAO.class
-br\com\fatec\persistencia\Banco.class
-br\com\fatec\model\Cliente.class
-br\com\fatec\DAO\DAO.class
-br\com\fatec\model\Produto.class
