@@ -1,0 +1,23 @@
+# Maven
+target/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.bak
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
