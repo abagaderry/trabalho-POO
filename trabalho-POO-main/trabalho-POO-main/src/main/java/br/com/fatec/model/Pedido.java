@@ -8,6 +8,6 @@ package br.com.fatec.model;
  *
  * @author biel2
  */
-public class Cliente {
+public class Pedido {
     
 }
