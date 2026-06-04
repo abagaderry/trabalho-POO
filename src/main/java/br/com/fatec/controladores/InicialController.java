@@ -19,7 +19,7 @@ import javafx.scene.Node;
  *
  * @author bruno
  */
-public class InicialController {
+public class InicialController{
         @FXML
     private void abrirLogin(ActionEvent event) throws IOException {
 
@@ -35,7 +35,7 @@ public class InicialController {
         stage.show();
     }
 
-    @FXML
+         @FXML
     private void abrirCadastro(ActionEvent event) throws IOException {
 
         Parent root = FXMLLoader.load(
