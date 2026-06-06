@@ -11,7 +11,7 @@
    <children>
       <AnchorPane prefHeight="589.0" prefWidth="429.0">
          <children>
-            <Button fx:id="primaryButton11" layoutX="135.0" layoutY="243.0" prefHeight="79.0" prefWidth="136.0" text="Switch to Secondary View" />
+            <Button fx:id="primaryButton11" layoutX="135.0" layoutY="243.0" prefHeight="79.0" prefWidth="136.0" text="Consultar" />
             <ComboBox layoutX="120.0" layoutY="161.0" prefHeight="25.0" prefWidth="167.0" />
             <Label layoutX="121.0" layoutY="144.0" text="Consultar por:" />
          </children>
