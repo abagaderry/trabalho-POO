@@ -181,7 +181,7 @@ public class ProdutoDAO implements DAO <Produto>{
             produto.setNome(rs.getString("nome"));
             produto.setPrescricao(rs.getBoolean("prescricao"));
             produto.setDescricao(rs.getString("descricao"));
-            //produto.setPreco(rs.getFloat("preco"));       //Não funciona ainda
+            produto.setPreco(rs.getFloat("preco"));       
             
             //adicionar na coleção
             listagem.add(produto);

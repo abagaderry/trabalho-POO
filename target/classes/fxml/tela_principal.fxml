@@ -6,13 +6,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="509.0" prefWidth="446.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" prefHeight="674.0" prefWidth="446.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controladores.PrincipalController">
    <children>
       <AnchorPane prefHeight="589.0" prefWidth="429.0">
          <children>
-            <Label layoutX="157.0" layoutY="70.0" text="Primary View" />
-            <Button fx:id="primaryButton1" layoutX="135.0" layoutY="174.0"  prefHeight="79.0" prefWidth="136.0" text="Switch to Secondary View" />
-            <Button fx:id="primaryButton11" layoutX="135.0" layoutY="273.0" prefHeight="79.0" prefWidth="136.0" text="Switch to Secondary View" />
+            <Label layoutX="157.0" layoutY="70.0" text="Tela Principal" />
+            <Button fx:id="Pedido" layoutX="135.0" layoutY="174.0" onAction="#Pedido" prefHeight="79.0" prefWidth="136.0" text="Realizar Pedido" />
+            <Button fx:id="Lista" layoutX="135.0" layoutY="273.0" onAction="#Lista" prefHeight="79.0" prefWidth="136.0" text="Lista Produtos" />
+            <Button fx:id="Relatorio" layoutX="135.0" layoutY="380.0" onAction="#Relatorio" prefHeight="79.0" prefWidth="136.0" text="Relatório" />
+            <Button fx:id="Cadastro" layoutX="135.0" layoutY="481.0" onAction="#Cadastro" prefHeight="79.0" prefWidth="136.0" text="Cadastro Produto" />
          </children>
       </AnchorPane>
    </children>
