@@ -1,0 +1,11 @@
+cpf;nome;datanasc;cep;endereco;num_comp;bairro;cidade;uf;fone;email;usuario;senha
+123.456.789-00;Ana Paula Souza;1990-03-15;09750-000;Rua das Flores;12;Centro;São Bernardo do Campo;SP;(11)91234-5678;ana.souza@email.com;ana.souza;senha123
+987.654.321-00;Carlos Mendes;1985-07-22;09780-100;Av. Kennedy;350;Jardim do Mar;São Bernardo do Campo;SP;(11)92345-6789;carlos.mendes@email.com;carlos.mendes;senha456
+111.222.333-44;Fernanda Lima;1993-11-05;09721-000;Rua Marechal Deodoro;78;Rudge Ramos;São Bernardo do Campo;SP;(11)93456-7890;fernanda.lima@email.com;fern.lima;senha789
+444.555.666-77;Ricardo Oliveira;1978-01-30;09726-000;Rua Jurubatuba;200;Nova Petrópolis;São Bernardo do Campo;SP;(11)94567-8901;ricardo.oli@email.com;ricardo.oli;senhaABC
+222.333.444-55;Juliana Costa;1995-06-18;09890-000;Rua João Pessoa;45;Baeta Neves;São Bernardo do Campo;SP;(11)95678-9012;juliana.costa@email.com;juli.costa;senhaDEF
+555.666.777-88;Marcos Pereira;1988-09-10;09760-000;Rua Nicolau Filadelfo;33;Assunção;São Bernardo do Campo;SP;(11)96789-0123;marcos.per@email.com;marcos.per;senhaGHI
+333.444.555-66;Beatriz Rocha;2000-02-25;09715-000;Av. Pereira Barreto;99;Santa Teresinha;Santo André;SP;(11)97890-1234;beatriz.rocha@email.com;bea.rocha;senhaJKL
+666.777.888-99;Thiago Alves;1982-12-07;09050-000;Rua Sete de Setembro;150;Vila Bastos;Santo André;SP;(11)98901-2345;thiago.alves@email.com;thi.alves;senhaMNO
+777.888.999-00;Larissa Nunes;1997-04-14;09340-000;Rua Yervant Kissajikian;22;Piraporinha;Diadema;SP;(11)99012-3456;larissa.nunes@email.com;lari.nunes;senhaPQR
+888.999.000-11;Paulo Ferreira;1975-08-03;09911-000;Rua Dom Pedro II;67;Centro;Mauá;SP;(11)90123-4567;paulo.ferreira@email.com;paulo.fer;senhaSTV
