@@ -1,0 +1,21 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 7 de jun. de 2026, 10:39:24
+    Author     : biel2
+*/
+.root {
+    -fx-font-family: sans-serif;
+    -fx-font-style: oblique;
+    -fx-background-color: lightcyan;
+}
+
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+}

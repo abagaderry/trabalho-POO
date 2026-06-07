@@ -6,6 +6,7 @@ import br.com.fatec.DAO.ProdutoDAO;
 import br.com.fatec.model.Cliente;
 import br.com.fatec.model.Pedido;
 import br.com.fatec.model.Produto;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -13,7 +14,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -25,34 +28,53 @@ import javafx.stage.Stage;
 
 public class RelatorioController implements Initializable {
 
-    // ── Componentes do FXML ──────────────────────────────────────────────────
     @FXML private Button           btnRelatorio;
     @FXML private ComboBox<String> cmbRelatorio;
     @FXML private ComboBox<String> cmbFiltro;
 
-    // ── DAOs ─────────────────────────────────────────────────────────────────
     private final ProdutoDAO produtoDAO = new ProdutoDAO();
     private final ClienteDAO clienteDAO = new ClienteDAO();
     private final PedidoDAO  pedidoDAO  = new PedidoDAO();
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // INICIALIZAÇÃO
-    // ─────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cmbRelatorio.setItems(FXCollections.observableArrayList("Produtos", "Clientes", "Pedidos"));
 
-        // Atualiza o cmbFiltro sempre que o tipo de relatório muda
         cmbRelatorio.valueProperty().addListener((obs, antigo, novo) -> {
             if (novo != null) atualizarFiltros(novo);
         });
 
         btnRelatorio.setOnAction(e -> gerarRelatorio());
+
+        // Intercepta o X e volta para a tela principal
+        btnRelatorio.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        Stage stage = (Stage) newWindow;
+
+                        stage.setOnCloseRequest(event -> {
+                            event.consume();
+
+                            try {
+                                Parent root = FXMLLoader.load(
+                                    getClass().getResource("/fxml/tela_principal.fxml")
+                                );
+                                stage.setScene(new Scene(root));
+                                stage.setTitle("Tela Principal");
+                                stage.setOnCloseRequest(null); // limpa o handler
+                                stage.show();
+                            } catch (IOException e) {
+                                exibirAlerta(Alert.AlertType.ERROR,
+                                    "Erro", "Não foi possível abrir a tela principal.");
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ATUALIZA OS FILTROS CONFORME O RELATÓRIO SELECIONADO
-    // ─────────────────────────────────────────────────────────────────────────
     private void atualizarFiltros(String relatorio) {
         cmbFiltro.getItems().clear();
         cmbFiltro.setValue(null);
@@ -77,9 +99,6 @@ public class RelatorioController implements Initializable {
         cmbFiltro.setValue("Sem filtro");
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // AÇÃO DO BOTÃO
-    // ─────────────────────────────────────────────────────────────────────────
     private void gerarRelatorio() {
         String relatorio = cmbRelatorio.getValue();
         String filtro    = cmbFiltro.getValue();
@@ -92,24 +111,15 @@ public class RelatorioController implements Initializable {
 
         try {
             switch (relatorio) {
-                case "Produtos":
-                    gerarRelatorioProdutos(filtro);
-                    break;
-                case "Clientes":
-                    gerarRelatorioClientes(filtro);
-                    break;
-                case "Pedidos":
-                    gerarRelatorioPedidos();
-                    break;
+                case "Produtos": gerarRelatorioProdutos(filtro); break;
+                case "Clientes": gerarRelatorioClientes(filtro); break;
+                case "Pedidos":  gerarRelatorioPedidos();        break;
             }
         } catch (SQLException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro no banco de dados", e.getMessage());
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // RELATÓRIO DE PRODUTOS
-    // ─────────────────────────────────────────────────────────────────────────
     private void gerarRelatorioProdutos(String filtro) throws SQLException {
         String criterio;
         if ("Com prescrição".equals(filtro)) {
@@ -127,15 +137,13 @@ public class RelatorioController implements Initializable {
             return;
         }
 
-        // Monta o conteúdo do relatório
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-6s %-30s %-14s %s%n", "ID", "Nome", "Prescrição", "Preço"));
         sb.append("─".repeat(62)).append("\n");
 
         for (Produto p : lista) {
             sb.append(String.format("%-6d %-30s %-14s R$ %.2f%n",
-                p.getId(),
-                p.getNome(),
+                p.getId(), p.getNome(),
                 p.getPrescricao() ? "Sim" : "Não",
                 p.getPreco()
             ));
@@ -147,15 +155,11 @@ public class RelatorioController implements Initializable {
         exibirJanelaRelatorio(titulo, sb.toString(), lista.size());
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // RELATÓRIO DE CLIENTES
-    // ─────────────────────────────────────────────────────────────────────────
     private void gerarRelatorioClientes(String filtro) throws SQLException {
         String criterio = "";
         String cidadeEscolhida = "";
 
         if ("Por cidade".equals(filtro)) {
-            // Pop-up para o usuário digitar a cidade
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Filtro por Cidade");
             dialog.setHeaderText(null);
@@ -163,7 +167,6 @@ public class RelatorioController implements Initializable {
 
             Optional<String> resultado = dialog.showAndWait();
 
-            // Cancelou ou deixou em branco → aborta
             if (resultado.isEmpty() || resultado.get().trim().isEmpty()) {
                 exibirAlerta(Alert.AlertType.WARNING,
                     "Filtro cancelado", "Nenhuma cidade informada.");
@@ -190,11 +193,7 @@ public class RelatorioController implements Initializable {
 
         for (Cliente c : lista) {
             sb.append(String.format("%-5d %-25s %-16s %-20s %-4s%n",
-                c.getId(),
-                c.getNome(),
-                c.getCpf(),
-                c.getCidade(),
-                c.getUf()
+                c.getId(), c.getNome(), c.getCpf(), c.getCidade(), c.getUf()
             ));
         }
 
@@ -204,9 +203,6 @@ public class RelatorioController implements Initializable {
         exibirJanelaRelatorio(titulo, sb.toString(), lista.size());
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // RELATÓRIO DE PEDIDOS
-    // ─────────────────────────────────────────────────────────────────────────
     private void gerarRelatorioPedidos() throws SQLException {
         Collection<Pedido> lista = pedidoDAO.listar("");
 
@@ -234,13 +230,9 @@ public class RelatorioController implements Initializable {
         exibirJanelaRelatorio("Relatório de Pedidos", sb.toString(), lista.size());
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // JANELA DO RELATÓRIO
-    // ─────────────────────────────────────────────────────────────────────────
     private void exibirJanelaRelatorio(String titulo, String conteudo, int total) {
         TextArea textArea = new TextArea(conteudo + "\nTotal de registros: " + total);
         textArea.setEditable(false);
-        // Fonte monoespaçada para o alinhamento das colunas ficar correto
         textArea.setStyle("-fx-font-family: 'Courier New'; -fx-font-size: 13px;");
         textArea.setPrefSize(780, 480);
 
@@ -250,9 +242,6 @@ public class RelatorioController implements Initializable {
         stage.show();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // HELPER
-    // ─────────────────────────────────────────────────────────────────────────
     private void exibirAlerta(Alert.AlertType tipo, String titulo, String mensagem) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);

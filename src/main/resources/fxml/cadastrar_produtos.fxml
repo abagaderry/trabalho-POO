@@ -7,15 +7,20 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="723.0" prefWidth="446.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controladores.CadProdutoController">
+<VBox alignment="CENTER" prefHeight="651.0" prefWidth="452.0" spacing="20.0" stylesheets="@../Style/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controladores.CadProdutoController">
    <children>
-      <AnchorPane prefHeight="127.0" prefWidth="406.0">
+      <AnchorPane prefHeight="36.0" prefWidth="412.0">
          <children>
-            <Button fx:id="btnCadastro" layoutX="220.0" layoutY="25.0" mnemonicParsing="false" onAction="#Cadastro" prefHeight="78.0" prefWidth="134.0" text="Cadastrar Produtos" />
+            <Label fx:id="lblTitulo" prefHeight="26.0" prefWidth="412.0" text="Tela de Cadastro de Produtos">
+               <font>
+                  <Font name="System Bold Italic" size="30.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="482.0" prefWidth="406.0">
+      <AnchorPane prefHeight="488.0" prefWidth="412.0">
          <children>
             <TextField fx:id="txtNome" layoutX="29.0" layoutY="58.0" onAction="#Nome" prefHeight="26.0" prefWidth="206.0" />
             <TextField fx:id="txtDescricao" layoutX="31.0" layoutY="217.0" onAction="#Descricao" prefHeight="148.0" prefWidth="168.0" />
@@ -25,6 +30,24 @@
             <Label layoutX="29.0" layoutY="391.0" text="Preço:" />
             <Label layoutX="29.0" layoutY="200.0" text="Descrição:" />
             <Label layoutX="29.0" layoutY="116.0" text="Precisa de prescrição?" />
+            <Button fx:id="btnCadastro1" layoutX="249.0" layoutY="55.0" mnemonicParsing="false" onAction="#Cadastro" prefHeight="32.0" prefWidth="94.0" text="Pesquisar">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="86.0" prefWidth="412.0">
+         <children>
+            <Button fx:id="btnExcluir" layoutX="252.0" mnemonicParsing="false" onAction="#Excluir" prefHeight="58.0" prefWidth="102.0" text="Excluir">
+               <font>
+                  <Font size="16.0" />
+               </font></Button>
+            <Button fx:id="btnCadastro2" layoutX="66.0" mnemonicParsing="false" onAction="#Cadastro" prefHeight="58.0" prefWidth="102.0" text="Gravar">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
    </children>

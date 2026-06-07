@@ -6,16 +6,23 @@ import br.com.fatec.DAO.ProdutoDAO;
 import br.com.fatec.model.Cliente;
 import br.com.fatec.model.Pedido;
 import br.com.fatec.model.Produto;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class RealizarCompraController implements Initializable {
 
@@ -31,7 +38,7 @@ public class RealizarCompraController implements Initializable {
     @FXML private TextField txtCidade;
     @FXML private TextField txtBairro;
 
-    // Dados do produto
+    // Dados do produto/pedido
     @FXML private TextField txtProduto;
     @FXML private TextField txtID;
     @FXML private TextField txtPrescricao;
@@ -44,11 +51,9 @@ public class RealizarCompraController implements Initializable {
     private final ProdutoDAO produtoDAO = new ProdutoDAO();
     private final PedidoDAO  pedidoDAO  = new PedidoDAO();
 
-    // ── Objetos carregados em memória ─────────────────────────────────────────
+    // ── Estado ────────────────────────────────────────────────────────────────
     private Cliente clienteAtual;
     private Produto produtoAtual;
-
-    // ── Controle de ID ─────────────────────────────────────────────────────────
     private static int proximoIdPedido = 1;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -57,13 +62,47 @@ public class RealizarCompraController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarCamposReadOnly();
+
+        // ── Máscaras nos campos editáveis pelo usuário ────────────────────────
+        aplicarMascaraCPF(txtCPF);           // 000.000.000-00
+        aplicarMascaraSomenteNumeros(txtQuantidade); // apenas dígitos
+
         configurarListenerCPF();
         configurarListenerProduto();
         configurarListenerQuantidade();
 
-        // Liga o botão ao método (pois o FXML não tem onAction definido)
         btnRealizarCompra.setOnAction(e -> realizarCompra());
+
+        // Intercepta o X vermelho e volta para a tela principal
+        btnRealizarCompra.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.windowProperty().addListener((obsWindow, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        Stage stage = (Stage) newWindow;
+                        stage.setOnCloseRequest(event -> {
+                            event.consume();
+                            try {
+                                Parent root = FXMLLoader.load(
+                                    getClass().getResource("/fxml/tela_principal.fxml")
+                                );
+                                stage.setScene(new Scene(root));
+                                stage.setTitle("Tela Principal");
+                                stage.setOnCloseRequest(null);
+                                stage.show();
+                            } catch (IOException e) {
+                                exibirAlerta(Alert.AlertType.ERROR,
+                                    "Erro", "Não foi possível abrir a tela principal.");
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // CONFIGURAÇÕES INICIAIS
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Campos preenchidos automaticamente ficam somente leitura
     private void configurarCamposReadOnly() {
@@ -79,11 +118,7 @@ public class RealizarCompraController implements Initializable {
         txtID.setEditable(false);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // LISTENERS
-    // ─────────────────────────────────────────────────────────────────────────
-
-    // Busca o cliente ao perder foco no campo de CPF
+    // Busca cliente ao perder foco no CPF
     private void configurarListenerCPF() {
         txtCPF.focusedProperty().addListener((obs, focoAntigo, focoNovo) -> {
             if (!focoNovo && !txtCPF.getText().trim().isEmpty()) {
@@ -92,7 +127,7 @@ public class RealizarCompraController implements Initializable {
         });
     }
 
-    // Busca o produto ao perder foco no campo de nome
+    // Busca produto ao perder foco no nome
     private void configurarListenerProduto() {
         txtProduto.focusedProperty().addListener((obs, focoAntigo, focoNovo) -> {
             if (!focoNovo && !txtProduto.getText().trim().isEmpty()) {
@@ -101,7 +136,7 @@ public class RealizarCompraController implements Initializable {
         });
     }
 
-    // Recalcula o total automaticamente ao alterar a quantidade
+    // Recalcula o total ao alterar a quantidade
     private void configurarListenerQuantidade() {
         txtQuantidade.textProperty().addListener((obs, antigo, novo) -> calcularTotal());
     }
@@ -112,18 +147,16 @@ public class RealizarCompraController implements Initializable {
 
     private void buscarClientePorCPF(String cpf) {
         try {
-            // Usa listar() com critério, pois não há busca direta por CPF no DAO
             Collection<Cliente> resultado = clienteDAO.listar("cpf = '" + cpf + "'");
 
             if (resultado.isEmpty()) {
                 exibirAlerta(Alert.AlertType.WARNING,
-                        "Cliente não encontrado",
-                        "Nenhum cliente com o CPF: " + cpf);
+                    "Cliente não encontrado", "Nenhum cliente com o CPF: " + cpf);
                 limparDadosCliente();
                 return;
             }
 
-            clienteAtual = resultado.iterator().next(); // CPF é único → sempre 1 resultado
+            clienteAtual = resultado.iterator().next();
             preencherDadosCliente(clienteAtual);
 
         } catch (SQLException e) {
@@ -133,18 +166,16 @@ public class RealizarCompraController implements Initializable {
 
     private void buscarProdutoPorNome(String nome) {
         try {
-            // Busca por nome parcial (LIKE)
             Collection<Produto> resultado = produtoDAO.listar("nome LIKE '%" + nome + "%'");
 
             if (resultado.isEmpty()) {
                 exibirAlerta(Alert.AlertType.WARNING,
-                        "Produto não encontrado",
-                        "Nenhum produto com o nome: " + nome);
+                    "Produto não encontrado", "Nenhum produto com o nome: " + nome);
                 limparDadosProduto();
                 return;
             }
 
-            produtoAtual = resultado.iterator().next(); // pega o primeiro da lista
+            produtoAtual = resultado.iterator().next();
             preencherDadosProduto(produtoAtual);
 
         } catch (SQLException e) {
@@ -169,7 +200,7 @@ public class RealizarCompraController implements Initializable {
         txtProduto.setText(p.getNome());
         txtID.setText(String.valueOf(p.getId()));
         txtPrescricao.setText(p.getPrescricao() ? "Sim" : "Não");
-        txtValorUni.setText(String.format("R$ %.2f", p.getPreco()).replace(".", ","));
+        txtValorUni.setText(formatarReal((long)(p.getPreco() * 100)));
         calcularTotal();
     }
 
@@ -179,9 +210,9 @@ public class RealizarCompraController implements Initializable {
             return;
         }
         try {
-            int qtd = Integer.parseInt(txtQuantidade.getText().trim());
-            float total = produtoAtual.getPreco() * qtd;
-            txtValor.setText(String.format("R$ %.2f", total).replace(".", ","));
+            int qtd       = Integer.parseInt(txtQuantidade.getText().trim());
+            float total   = produtoAtual.getPreco() * qtd;
+            txtValor.setText(formatarReal((long)(total * 100)));
         } catch (NumberFormatException e) {
             txtValor.clear();
         }
@@ -202,7 +233,7 @@ public class RealizarCompraController implements Initializable {
             pedido.setId(proximoIdPedido++);
             pedido.setCliente(clienteAtual);
             pedido.setProduto(produtoAtual);
-            pedido.setData(LocalDate.now().toString()); // "YYYY-MM-DD"
+            pedido.setData(LocalDate.now().toString());
             pedido.setQuantidade(qtd);
             pedido.setPrecoTotal(total);
 
@@ -227,32 +258,76 @@ public class RealizarCompraController implements Initializable {
     private boolean validarCampos() {
         if (clienteAtual == null) {
             exibirAlerta(Alert.AlertType.WARNING, "Cliente não carregado",
-                    "Preencha o CPF para carregar os dados do cliente.");
+                "Preencha o CPF para carregar os dados do cliente.");
             return false;
         }
         if (produtoAtual == null) {
             exibirAlerta(Alert.AlertType.WARNING, "Produto não carregado",
-                    "Preencha o nome do produto para carregar os dados.");
+                "Preencha o nome do produto para carregar os dados.");
             return false;
         }
         if (txtQuantidade.getText().trim().isEmpty()) {
             exibirAlerta(Alert.AlertType.WARNING, "Quantidade obrigatória",
-                    "Informe a quantidade do produto.");
+                "Informe a quantidade do produto.");
             return false;
         }
         try {
             int qtd = Integer.parseInt(txtQuantidade.getText().trim());
             if (qtd <= 0) {
                 exibirAlerta(Alert.AlertType.WARNING, "Quantidade inválida",
-                        "A quantidade deve ser maior que zero.");
+                    "A quantidade deve ser maior que zero.");
                 return false;
             }
         } catch (NumberFormatException e) {
             exibirAlerta(Alert.AlertType.WARNING, "Quantidade inválida",
-                    "Digite apenas números inteiros na quantidade.");
+                "Digite apenas números inteiros na quantidade.");
             return false;
         }
         return true;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MÁSCARAS
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // CPF → 000.000.000-00
+    private void aplicarMascaraCPF(TextField campo) {
+        campo.textProperty().addListener((obs, antigo, novo) -> {
+            String digits = novo.replaceAll("[^\\d]", "");
+            if (digits.length() > 11) digits = digits.substring(0, 11);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < digits.length(); i++) {
+                if (i == 3 || i == 6) sb.append('.');
+                if (i == 9)           sb.append('-');
+                sb.append(digits.charAt(i));
+            }
+
+            String formatado = sb.toString();
+            if (!novo.equals(formatado)) {
+                campo.setText(formatado);
+                campo.positionCaret(formatado.length());
+            }
+        });
+    }
+
+    // Quantidade → somente dígitos, sem formatação especial
+    private void aplicarMascaraSomenteNumeros(TextField campo) {
+        campo.textProperty().addListener((obs, antigo, novo) -> {
+            String digits = novo.replaceAll("[^\\d]", "");
+            if (!novo.equals(digits)) {
+                campo.setText(digits);
+                campo.positionCaret(digits.length());
+            }
+        });
+    }
+
+    // Preço → R$ 1.234,56 (usado nos campos read-only de valor)
+    private String formatarReal(long centavos) {
+        long reais = centavos / 100;
+        long cents = centavos % 100;
+        NumberFormat nf = NumberFormat.getIntegerInstance(new Locale("pt", "BR"));
+        return String.format("R$ %s,%02d", nf.format(reais), cents);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
