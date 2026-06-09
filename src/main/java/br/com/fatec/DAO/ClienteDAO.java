@@ -29,8 +29,8 @@ public class ClienteDAO implements DAO <Cliente>{
 
     @Override
     public boolean insere(Cliente model) throws SQLException {
-        String sql = "INSERT INTO cliente (id, cpf, nome, datanasc, cep, endereco, num_comp, bairro, cidade, uf, fone, email, usuario, senha) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO cliente (cpf, nome, datanasc, cep, endereco, num_comp, bairro, cidade, uf, fone, email, usuario, senha) "
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         
         //Abre a conexao
         Banco.conectar();
@@ -40,20 +40,19 @@ public class ClienteDAO implements DAO <Cliente>{
         
         //coloca os valores dentro do comando
         //substitui as '?' por dados
-        pst.setInt(1, model.getId());
-        pst.setString(2, model.getCpf());
-        pst.setString(3, model.getNome());
-        pst.setString(4, model.getDatanasc());
-        pst.setString(5, model.getCep());
-        pst.setString(6, model.getEndereco());
-        pst.setString(7, model.getNum_comp());
-        pst.setString(8, model.getBairro());
-        pst.setString(9, model.getCidade());
-        pst.setString(10, model.getUf());
-        pst.setString(11, model.getFone());
-        pst.setString(12, model.getEmail());
-        pst.setString(13, model.getUsuario());
-        pst.setString(14, model.getSenha());
+        pst.setString(1, model.getCpf());
+        pst.setString(2, model.getNome());
+        pst.setString(3, model.getDatanasc());
+        pst.setString(4, model.getCep());
+        pst.setString(5, model.getEndereco());
+        pst.setString(6, model.getNum_comp());
+        pst.setString(7, model.getBairro());
+        pst.setString(8, model.getCidade());
+        pst.setString(9, model.getUf());
+        pst.setString(10, model.getFone());
+        pst.setString(11, model.getEmail());
+        pst.setString(12, model.getUsuario());
+        pst.setString(13, model.getSenha());
          
         //executa o comando
         if(pst.executeUpdate() >= 1) { //tudo certo

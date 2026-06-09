@@ -25,19 +25,18 @@ public class PedidoDAO implements DAO<Pedido> {
     // ─────────────────────────────────────────────────────────────────────
     @Override
     public boolean insere(Pedido model) throws SQLException {
-        String sql = "INSERT INTO pedido (id, idCliente, idProduto, CPF, Data, Quantidade, PrecoTotal) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO pedido (idCliente, idProduto, CPF, Data, Quantidade, PrecoTotal) "
+                   + "VALUES (?, ?, ?, ?, ?, ?);";
 
         Banco.conectar();
         pst = Banco.obterConexao().prepareStatement(sql);
 
-        pst.setInt(1, model.getId());
-        pst.setInt(2, model.getCliente().getId());   // ✅ getId() pelo getter
-        pst.setInt(3, model.getProduto().getId());   // ✅ getId() pelo getter
-        pst.setString(4, model.getCliente().getCpf()); // ✅ getCpf() pelo getter
-        pst.setString(5, model.getData());
-        pst.setInt(6, model.getQuantidade());
-        pst.setFloat(7, model.getPrecoTotal());
+        pst.setInt(1, model.getCliente().getId());   // ✅ getId() pelo getter
+        pst.setInt(2, model.getProduto().getId());   // ✅ getId() pelo getter
+        pst.setString(3, model.getCliente().getCpf()); // ✅ getCpf() pelo getter
+        pst.setString(4, model.getData());
+        pst.setInt(5, model.getQuantidade());
+        pst.setFloat(6, model.getPrecoTotal());
 
         if (pst.executeUpdate() >= 1) {
             Banco.desconectar();

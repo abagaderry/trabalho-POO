@@ -18,6 +18,14 @@ public class Pedido {
     
     public Pedido() {}
 
+    public Pedido(Cliente Cliente, Produto Produto, String Data, int Quantidade, float PrecoTotal) {
+        this.Cliente = Cliente;
+        this.Produto = Produto;
+        this.Data = Data;
+        this.Quantidade = Quantidade;
+        this.PrecoTotal = PrecoTotal;
+    }
+
     public Pedido(int Id, Cliente Cliente, Produto Produto, String Data, int Quantidade, float PrecoTotal) {
         this.Id = Id;
         this.Cliente = Cliente;

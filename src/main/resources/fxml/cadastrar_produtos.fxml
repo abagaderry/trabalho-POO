@@ -30,7 +30,7 @@
             <Label layoutX="29.0" layoutY="391.0" text="Preço:" />
             <Label layoutX="29.0" layoutY="200.0" text="Descrição:" />
             <Label layoutX="29.0" layoutY="116.0" text="Precisa de prescrição?" />
-            <Button fx:id="btnCadastro1" layoutX="249.0" layoutY="55.0" mnemonicParsing="false" onAction="#Cadastro" prefHeight="32.0" prefWidth="94.0" text="Pesquisar">
+            <Button fx:id="btnCadastro1" layoutX="249.0" layoutY="55.0" mnemonicParsing="false" onAction="#Pesquisar" prefHeight="32.0" prefWidth="94.0" text="Pesquisar">
                <font>
                   <Font size="16.0" />
                </font>

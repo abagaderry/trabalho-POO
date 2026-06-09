@@ -230,7 +230,6 @@ public class RealizarCompraController implements Initializable {
             float total = produtoAtual.getPreco() * qtd;
 
             Pedido pedido = new Pedido();
-            pedido.setId(proximoIdPedido++);
             pedido.setCliente(clienteAtual);
             pedido.setProduto(produtoAtual);
             pedido.setData(LocalDate.now().toString());

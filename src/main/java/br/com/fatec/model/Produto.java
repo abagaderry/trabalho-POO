@@ -23,6 +23,13 @@ public class Produto {
         this.preco = preco;
     }
 
+    public Produto(String nome, boolean prescricao, String descricao, float preco) {
+        this.nome = nome;
+        this.prescricao = prescricao;
+        this.descricao = descricao;
+        this.preco = preco;
+    }
+
     
     
     public Produto() {

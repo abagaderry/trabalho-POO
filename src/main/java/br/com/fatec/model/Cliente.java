@@ -29,6 +29,22 @@ public class Cliente {
         this.endereco = endereco;
     }
 
+    public Cliente(String cpf, String nome, String datanasc, String cep, String num_comp, String bairro, String cidade, String uf, String fone, String email, String usuario, String senha, String endereco) {
+        this.cpf = cpf;
+        this.nome = nome;
+        this.datanasc = datanasc;
+        this.cep = cep;
+        this.num_comp = num_comp;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.uf = uf;
+        this.fone = fone;
+        this.email = email;
+        this.usuario = usuario;
+        this.senha = senha;
+        this.endereco = endereco;
+    }
+
     public Cliente() {
     }
 

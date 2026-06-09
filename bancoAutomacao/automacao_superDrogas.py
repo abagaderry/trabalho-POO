@@ -26,9 +26,9 @@ DB_CONFIG = {
 # ALTERE MANUALMENTE:
 # Caminho onde estão os arquivos .csv
 # =========================================================
-
-PASTA_CSV = os.getcwd()
-PASTA_CSV = os.path.join(PASTA_CSV, "CSV")
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print(dir_path)
+PASTA_CSV = dir_path + "\CSV"
 
 os.chdir(PASTA_CSV)
 
@@ -155,7 +155,8 @@ CREATE TABLE produto (
     descricao  VARCHAR(100) DEFAULT NULL,
     preco      FLOAT        DEFAULT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE KEY nome (nome)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 """)
 
@@ -179,7 +180,7 @@ CREATE TABLE pedido (
 
     CONSTRAINT fk_pedido_produto
         FOREIGN KEY (idProduto) REFERENCES produto (id)
-        ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 """)
 

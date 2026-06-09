@@ -33,8 +33,8 @@ public class ProdutoDAO implements DAO <Produto>{
     @Override
     public boolean insere(Produto model) throws SQLException {
         
-        String sql = "INSERT INTO produto (id, nome, prescricao, descricao, preco) "
-        + "VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO produto (nome, prescricao, descricao, preco) "
+        + "VALUES (?, ?, ?, ?);";
         
         //Abre a conexao
         Banco.conectar();
@@ -44,11 +44,10 @@ public class ProdutoDAO implements DAO <Produto>{
         
         //coloca os valores dentro do comando
         //substitui as '?' por dados
-        pst.setInt(1, model.getId());
-        pst.setString(2, model.getNome());
-        pst.setBoolean(3, model.getPrescricao());
-        pst.setString(4, model.getDescricao());
-        pst.setFloat(5, model.getPreco());
+        pst.setString(1, model.getNome());
+        pst.setBoolean(2, model.getPrescricao());
+        pst.setString(3, model.getDescricao());
+        pst.setFloat(4, model.getPreco());
         
         //executa o comando
         if(pst.executeUpdate() >= 1) { //tudo certo
@@ -88,8 +87,8 @@ public class ProdutoDAO implements DAO <Produto>{
 
     @Override
     public boolean altera(Produto model) throws SQLException {
-        String sql = "UPDATE produto SET nome = ? "
-        + "WHERE id = ?;";
+        String sql = "UPDATE produto SET nome = ?, prescricao = ?, descricao = ?, preco = ? "
+        + "WHERE nome = ?;";
         
         //Abre a conexao
         Banco.conectar();
@@ -101,7 +100,10 @@ public class ProdutoDAO implements DAO <Produto>{
         //substitui as '?' por dados
         
         pst.setString(1, model.getNome());
-        pst.setInt(2, model.getId());
+        pst.setBoolean(2, model.getPrescricao());
+        pst.setString(3, model.getDescricao());
+        pst.setFloat(4, model.getPreco());
+        pst.setString(5, model.getNome());
         
         //executa o comando
         if(pst.executeUpdate() >= 1) { //tudo certo

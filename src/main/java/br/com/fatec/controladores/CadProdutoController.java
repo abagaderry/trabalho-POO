@@ -36,6 +36,7 @@ public class CadProdutoController implements Initializable {
     private final ProdutoDAO produtoDAO   = new ProdutoDAO();
     private static int       proximoId    = 1;
     private Produto          produtoAtual = null;
+    private boolean incluindo = true;
 
     // ─────────────────────────────────────────────────────────────────────────
     // INICIALIZAÇÃO
@@ -99,6 +100,7 @@ public class CadProdutoController implements Initializable {
 
             produtoAtual = resultado.iterator().next();
             preencherCampos(produtoAtual);
+            incluindo = false;
 
         } catch (SQLException e) {
             exibirAlerta(Alert.AlertType.ERROR, "Erro no banco", "Detalhe: " + e.getMessage());
@@ -129,19 +131,28 @@ public class CadProdutoController implements Initializable {
             float preco = Float.parseFloat(precoRaw);
 
             Produto produto = new Produto();
-            produto.setId(proximoId++);
             produto.setNome(txtNome.getText().trim());
             produto.setDescricao(txtDescricao.getText().trim());
             produto.setPrescricao(cmbPrescricao.getValue().equals("Sim"));
             produto.setPreco(preco);
-
-            if (produtoDAO.insere(produto)) {
-                exibirAlerta(Alert.AlertType.INFORMATION,
-                    "Sucesso", "Produto cadastrado com sucesso!");
-                limparCampos();
+            
+            if (incluindo){
+                if (produtoDAO.insere(produto)) {
+                    exibirAlerta(Alert.AlertType.INFORMATION,
+                        "Sucesso", "Produto cadastrado com sucesso!");
+                    limparCampos();
+                } else {
+                    exibirAlerta(Alert.AlertType.ERROR,
+                        "Falha", "Não foi possível cadastrar o produto.");
+                }
             } else {
-                exibirAlerta(Alert.AlertType.ERROR,
-                    "Falha", "Não foi possível cadastrar o produto.");
+                if (produtoDAO.altera(produto)) {
+                    exibirAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Alteração feita com sucesso!");
+                    limparCampos();
+                } else {
+                    exibirAlerta(Alert.AlertType.WARNING, "Falha", "Falha na alteração.");
+                    limparCampos();
+                }
             }
 
         } catch (NumberFormatException e) {
@@ -225,6 +236,7 @@ public class CadProdutoController implements Initializable {
         txtPreco.clear();
         cmbPrescricao.setValue(null);
         produtoAtual = null;
+        incluindo = true;
     }
 
     private String formatarReal(long centavos) {
